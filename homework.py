@@ -32,6 +32,7 @@ HOMEWORK_STATUSES = {
 
 
 def send_message(bot, message):
+    """отправляет сообщение в Telegram чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.info('Сообщение успешно отправлено')
@@ -40,6 +41,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
+    """возвращает ответ API, преобразовав его из формата JSON."""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     try:
@@ -63,14 +65,15 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
+    """Проверка статуса домашней работы из ответа API."""
     if type(response) is dict and len(response) == 0:
         logging.error('Ответ API пуст или отличен от словаря')
         raise TypeError('Ответ API пуст или отличен от словаря')
     elif 'homeworks' not in response:
         logging.error('отсутствие ожидаемых ключей в ответе API')
         raise IndexError('отсутствие ожидаемых ключей в ответе API')
-    elif (type(response['homeworks']) is list and
-          len(response['homeworks']) == 0):
+    elif (type(response['homeworks']) is list
+          and len(response['homeworks']) == 0):
         logging.error('Список домашних работ пуст')
         raise IndexError('Список домашних работ пуст')
 
@@ -79,6 +82,7 @@ def check_response(response):
 
 
 def parse_status(homework):
+    """Проверка ключей из ответа API."""
     if 'homework_name' not in homework:
         logging.error('отсутствует ключ "homework_name" в ответе API')
         raise KeyError('отсутствует ключ "homework_name" в ответе API')
@@ -101,6 +105,7 @@ def parse_status(homework):
 
 
 def check_tokens():
+    """Проверка наличия переменных окружения."""
     lst = {
         'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
         'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
