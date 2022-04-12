@@ -70,8 +70,8 @@ def check_response(response):
         logging.error('Ответ API пуст или отличен от словаря')
         raise TypeError('Ответ API пуст или отличен от словаря')
     elif 'homeworks' not in response:
-        logging.error('отсутствие ожидаемых ключей в ответе API')
-        raise IndexError('отсутствие ожидаемых ключей в ответе API')
+        logging.error('отсутствует ключ "homeworks" в ответе API')
+        raise TypeError('отсутствует ключ "homeworks" в ответе API')
     elif (type(response['homeworks']) is list
           and len(response['homeworks']) == 0):
         logging.error('Список домашних работ пуст')
