@@ -9,7 +9,7 @@ import requests
 import telegram
 from dotenv import load_dotenv
 
-from settings import *
+import settings
 
 load_dotenv()
 logging.basicConfig(
@@ -37,16 +37,18 @@ def get_api_answer(current_timestamp):
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     try:
-        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+        response = requests.get(
+            settings.ENDPOINT, headers=settings.HEADERS, params=params
+        )
     except Exception as error:
         logging.error(f'Ошибка ответа API: {error}')
         raise Exception(f'Ошибка ответа API: {error}')
     if response.status_code != H.OK:
         logging.error(
-            f'Эндпоинт {ENDPOINT} недоступен. '
+            f'Эндпоинт {settings.ENDPOINT} недоступен. '
             f'HTTPStatus is not OK: {response.status_code}')
         raise Exception(
-            f'Эндпоинт {ENDPOINT} недоступен. '
+            f'Эндпоинт {settings.ENDPOINT} недоступен. '
             f'HTTPStatus is not OK: {response.status_code}'
         )
     try:
@@ -87,13 +89,13 @@ def parse_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
 
-    if homework_status not in HOMEWORK_STATUSES:
+    if homework_status not in settings.HOMEWORK_STATUSES:
         logging.error(
             f'Недокументированный статус "{homework_status}" в ответе API')
         raise Exception(
             f'Недокументированный статус "{homework_status}" в ответе API'
         )
-    verdict = HOMEWORK_STATUSES[homework_status]
+    verdict = settings.HOMEWORK_STATUSES[homework_status]
     logging.info('Получен новый статус.')
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
@@ -135,7 +137,7 @@ def main():
                 status = message
 
             current_timestamp = response.get('current_date')
-            time.sleep(RETRY_TIME)
+            time.sleep(settings.RETRY_TIME)
 
         except Exception as error:
             message = f'У меня баги: {error}'
@@ -144,7 +146,7 @@ def main():
                 send_message(bot, message)
                 error_message = message
             current_timestamp = response.get('current_date')
-            time.sleep(RETRY_TIME)
+            time.sleep(settings.RETRY_TIME)
 
 
 if __name__ == '__main__':
