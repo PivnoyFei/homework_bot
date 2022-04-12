@@ -4,11 +4,12 @@ import sys
 import time
 from http import HTTPStatus as H
 from logging import StreamHandler
-from settings import *
 
 import requests
 import telegram
 from dotenv import load_dotenv
+
+from settings import *
 
 load_dotenv()
 logging.basicConfig(
