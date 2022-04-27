@@ -122,6 +122,9 @@ def main():
     if not check_tokens():
         exit(logging.critical('Программа принудительно остановлена.'))
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    if not bot["id"] or not bot["username"] or not bot["first_name"]:
+        logging.critical('Переменная бот не соответствует ожиданию.')
+        raise Exception('Переменная бот не соответствует ожиданию.')
     current_timestamp = int(time.time())
 
     status = ''
@@ -136,17 +139,15 @@ def main():
                 send_message(bot, message)
                 status = message
 
-            current_timestamp = response.get('current_date')
-            time.sleep(settings.RETRY_TIME)
-
         except Exception as error:
             message = f'У меня баги: {error}'
             logging.info(f'Сбой в работе программы: {message}')
             if message != error_message:
                 send_message(bot, message)
                 error_message = message
-            current_timestamp = response.get('current_date')
-            time.sleep(settings.RETRY_TIME)
+
+        current_timestamp = response.get('current_date')
+        time.sleep(settings.RETRY_TIME)
 
 
 if __name__ == '__main__':
